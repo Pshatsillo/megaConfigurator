@@ -2,6 +2,9 @@ package ru.ablog.megad.configurator.windows;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.SimpleTheme;
+import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import javafx.scene.layout.Pane;
@@ -176,15 +179,39 @@ public class MegaMainScreen {
             pn.put(mode.text(), Integer.parseInt(mode.attr("value")));
             cbpn.add(mode.text());
         }
-
         Panel main = new Panel();
         main.setLayoutManager(new AbsoluteLayout());
+
+        ActionListBox actionListBox = new ActionListBox();
+
+        actionListBox.setSize(new TerminalSize(7, 3));
+        actionListBox.setPosition(new TerminalPosition(1, 3));
+        actionListBox.addItem("Port-1", new Runnable() {
+            @Override
+            public void run() {
+                log.info("port - {}", actionListBox.getSelectedIndex());
+            }
+        });
+        actionListBox.addItem("Port-2", new Runnable() {
+            @Override
+            public void run() {
+                log.info("port - {}", actionListBox.getSelectedIndex());
+            }
+        });
+        actionListBox.addItem("Port-3", new Runnable() {
+            @Override
+            public void run() {
+                log.info("port - {}", actionListBox.getSelectedIndex());
+            }
+        });
+
         ComboBox<String> modeCB = new ComboBox<String>(cbpn);
         modeCB.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
         modeCB.setPosition(new TerminalPosition(0, 0));
         modeCB.setPreferredSize(new TerminalSize(7, 1));
         modeCB.setSize(new TerminalSize(7, 1));
         main.addComponent(modeCB);
+        main.addComponent(actionListBox);
 
         MegaConfig.gm.refreshWindow(main.withBorder(Borders.doubleLine(megaType.trim() + " firmware: "+ firmware)));
 

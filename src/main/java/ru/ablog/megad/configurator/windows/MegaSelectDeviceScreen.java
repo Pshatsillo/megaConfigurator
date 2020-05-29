@@ -2,6 +2,12 @@ package ru.ablog.megad.configurator.windows;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.menu.Menu;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
 import ru.ablog.megad.configurator.MainWindow;
 import ru.ablog.megad.configurator.MegaConfig;
 import ru.ablog.megad.configurator.OnUDPIncomingEventListener;

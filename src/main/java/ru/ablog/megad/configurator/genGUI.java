@@ -1,6 +1,10 @@
 package ru.ablog.megad.configurator;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.menu.Menu;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
+import com.googlecode.lanterna.gui2.menu.MenuItem;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import org.slf4j.Logger;
@@ -28,6 +32,17 @@ public class genGUI implements OnGUIUpdate {
                 try {
                     screen = terminalFactory.createScreen();
                     screen.startScreen();
+                    MenuBar menubar = new MenuBar();
+                    Menu menuFile = new Menu("Действие");
+
+                    Menu menuExit = new Menu("Exit");
+
+                    menuExit.add(new MenuItem("exit", () -> {log.info("exit");  System.exit(0);}));
+                    menubar.add(menuFile);
+                    menubar.add(menuExit);
+                    BasicWindow menuwindow = new BasicWindow();
+                    menuwindow.setComponent(menubar);
+
 
                     WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
                     //window.setHints(Arrays.asList(Window.Hint.CENTERED));
@@ -35,6 +50,16 @@ public class genGUI implements OnGUIUpdate {
                     // mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
                     // window.setComponent(mainPanel);
                     window.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    textGUI.addListener((textGUI1, keyStroke) -> {
+                        log.info("key {}", keyStroke);
+                        if(keyStroke.getKeyType() == KeyType.F2){
+                            textGUI.setActiveWindow(menuwindow);
+                        } else if(keyStroke.getKeyType() == KeyType.Escape){
+                            textGUI.setActiveWindow(window);
+                        }
+                        return true;
+                    });
+                    textGUI.addWindow(menuwindow);
                     textGUI.addWindowAndWait(window);
                 } catch (IOException e) {
                     e.printStackTrace();
