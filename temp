@@ -4,7 +4,8 @@
   <a href="/sec">Back</a>
   <br>P0/OFF/508
   <form action="/sec/">
-   <input type="hidden" name="pn" value="0">Type <select name="pty"><option value="255">NC</option><option value="0" selected>In</option><option value="1">Out</option><option value="3">DSen</option><option value="2">ADC</option></select>
+   <input type="hidden" name="pn" value="0">Type
+   <select name="pty"><option value="255">NC</option><option value="0" selected>In</option><option value="1">Out</option><option value="3">DSen</option><option value="2">ADC</option></select>
    <br>Act
    <input name="ecmd" value="7:2">
    <br>Net

@@ -1,5 +1,6 @@
 package ru.ablog.megad.configurator;
 
+import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
@@ -27,38 +28,42 @@ public class genGUI implements OnGUIUpdate {
             @Override
             public void run() {
                 DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
-                //startupScreen = new MegaStartupScreen();
+                terminalFactory.setTerminalEmulatorTitle("MegaDConfig");
                 Screen screen = null;
                 try {
                     screen = terminalFactory.createScreen();
                     screen.startScreen();
                     MenuBar menubar = new MenuBar();
-                    Menu menuFile = new Menu("Действие");
-
-                    Menu menuExit = new Menu("Exit");
-
-                    menuExit.add(new MenuItem("exit", () -> {log.info("exit");  System.exit(0);}));
+                    Menu menuFile = new Menu("Действие(F2)");
+                    menuFile.add(new MenuItem("Выход", () -> {log.info("exit");  System.exit(0);}));
+                    menuFile.setEnabled(false);
                     menubar.add(menuFile);
-                    menubar.add(menuExit);
                     BasicWindow menuwindow = new BasicWindow();
                     menuwindow.setComponent(menubar);
 
-
                     WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
+
+                    textGUI.addListener((textGUI1, keyStroke) -> {
+                        //log.info("key {}", keyStroke);
+                       // log.info("key {}", textGUI1.toString());
+                        if(keyStroke.getKeyType() == KeyType.F2){
+                            menuFile.setEnabled(true);
+                            menuFile.takeFocus();
+                            textGUI.setActiveWindow(menuwindow);
+                        } else if(keyStroke.getKeyType() == KeyType.Escape){
+                            menuFile.setEnabled(false);
+                            //textGUI.setActiveWindow(window);
+                            //log.info("windows {}", textGUI.getWindows());
+                        }
+                        return true;
+                    });
+
                     //window.setHints(Arrays.asList(Window.Hint.CENTERED));
                     // Panel mainPanel = new Panel();
                     // mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
                     // window.setComponent(mainPanel);
                     window.setHints(Arrays.asList(Window.Hint.CENTERED));
-                    textGUI.addListener((textGUI1, keyStroke) -> {
-                        log.info("key {}", keyStroke);
-                        if(keyStroke.getKeyType() == KeyType.F2){
-                            textGUI.setActiveWindow(menuwindow);
-                        } else if(keyStroke.getKeyType() == KeyType.Escape){
-                            textGUI.setActiveWindow(window);
-                        }
-                        return true;
-                    });
+                    //textGUI.setTheme(LanternaThemes.getRegisteredTheme("bigsnake"));
                     textGUI.addWindow(menuwindow);
                     textGUI.addWindowAndWait(window);
                 } catch (IOException e) {

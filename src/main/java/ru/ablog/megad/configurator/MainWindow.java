@@ -103,11 +103,11 @@ public class MainWindow implements OnUDPIncomingEventListener {
 
 	public static void showDeviceSelection(InetAddress inetAddress) throws IOException, InterruptedException {
 		megaSelectDeviceScreen = new MegaSelectDeviceScreen(inetAddress);
-		MegaConfig.gm.refreshWindow(megaSelectDeviceScreen.show().withBorder(Borders.singleLine("Select device")));
+		MegaConfig.gm.refreshWindow(megaSelectDeviceScreen.show(textGUI).withBorder(Borders.singleLine("Select device")));
 		//window.setComponent();
 	}
 
-	public static void showMainScreen(String inetAddress) throws IOException, InterruptedException {
+	public static void showMainScreen(String inetAddress, WindowBasedTextGUI textGUI) throws IOException, InterruptedException {
 		mainScreen = new MegaMainScreen(inetAddress, textGUI);
 		MegaConfig.gm.refreshWindow(mainScreen.show().withBorder(Borders.singleLine("Main Panel")));
 	}
