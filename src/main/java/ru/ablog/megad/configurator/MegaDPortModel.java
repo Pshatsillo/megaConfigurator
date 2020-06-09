@@ -6,7 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.ablog.megad.configurator.windows.MegaMainScreen;
 
 import java.util.HashMap;
 
@@ -16,12 +15,14 @@ public class MegaDPortModel {
     Document port;
     String setSelectedPTY;
     String portStatus;
-    HashMap<String, Integer> pn = new HashMap<String, Integer>();
+    HashMap<String, Integer> pn = new HashMap<>();
     String ecmdInput;
     String eth;
     boolean naf;
-    HashMap<String, Integer> m = new HashMap<String, Integer>();
+    HashMap<String, Integer> m = new HashMap<>();
+    HashMap<String, Integer> defD = new HashMap<>();
     String selectedM;
+    String selectedDefD;
     boolean misc;
     boolean d;
 
@@ -39,11 +40,7 @@ public class MegaDPortModel {
     }
 
     public void setNaf() {
-        if (port.select("checkbox[name=naf]").hasAttr("checked")){
-            naf = true;
-        } else {
-            naf = false;
-        }
+        naf = port.select("input[name=naf]").select("input[checked]").hasAttr("checked");
     }
 
     public HashMap<String, Integer> getM() {
@@ -75,12 +72,13 @@ public class MegaDPortModel {
     }
 
     public void setMisc() {
-       Object chb = port.select("input[name=misc]");
-        if (port.select("checkbox[name=misc]").hasAttr("checked")){
+        misc = port.select("input[name=misc]").select("input[checked]").hasAttr("checked");
+        //misc =  chb.;
+    /*    if (chb.select("input[checked]")){
             misc = true;
         } else {
             misc = false;
-        }
+        }*/
     }
 
     public boolean isD() {
@@ -88,10 +86,18 @@ public class MegaDPortModel {
     }
 
     public void setD() {
-        if (port.select("checkbox[name=d]").hasAttr("checked")){
-            d = true;
+        if (port.select("input[name=d]").select("input[checked]").hasAttr("checkbox")) {
+            d = port.select("input[name=d]").select("input[checked]").hasAttr("checked");
         } else {
-            d = false;
+            Elements dd = port.getElementsByAttributeValue("name", "d").select("select > option");
+            if (dd.size() > 0) {
+                selectedDefD = dd.select("option[selected]").text();
+                for (Element mode : dd) {
+                    defD.put(mode.text(), Integer.parseInt(mode.attr("value")));
+                }
+            } else {
+                defD = null;
+            }
         }
     }
 
