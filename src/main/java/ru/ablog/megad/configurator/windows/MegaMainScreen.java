@@ -14,6 +14,8 @@ import ru.ablog.megad.configurator.MegaDPortModel;
 import ru.ablog.megad.configurator.MegaHTTPConnect;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,13 +181,13 @@ public class MegaMainScreen {
         main.setLayoutManager(new AbsoluteLayout());
         main.withBorder(Borders.singleLine());
         MegaActionListbox actionListBox = new MegaActionListbox();
-        actionListBox.setSize(new TerminalSize(10, 15));
+        actionListBox.setSize(new TerminalSize(15, 15));
         actionListBox.setPosition(new TerminalPosition(0, 0));
         actionListBox.withBorder(Borders.singleLine());
         actionListBox.takeFocus();
         for (int i = 0; i < ports.size(); i++) {
             int finalI = i;
-            actionListBox.addItem("Port" + i, () -> loadport(finalI)); //сделать отдельный объект
+            actionListBox.addItem("Port " +i+ "- " + ports.get(i).getSelectedPTY(), () -> loadport(finalI)); //сделать отдельный объект
         }
         loadport(0);
         //actionListBox.addListener(this::loadportpref);
@@ -199,12 +201,28 @@ public class MegaMainScreen {
     }
 
     private void loadport(int i) {
-        //log.info("loadport {}",i);
-        //props.addComponent(getPTYComboBox(i));
+        log.info("loadport {}",i);
+        props.addComponent(getPTYComboBox(i));
     }
 
     ComboBox getPTYComboBox(int i) {
         ComboBox<String> modeCB;
+        MegaDPortModel port = ports.get(i);
+        HashMap<String, Integer> pty = port.getPTY();
+        //ArrayList<String> cbpn = pty.keySet().toArray();
+
+        modeCB = new ComboBox<String>(Arrays.toString(pty.keySet().toArray()));
+        //modeCB.setSelectedItem(selected.text());
+        modeCB.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
+        modeCB.setPosition(new TerminalPosition(25, 0));
+        modeCB.setPreferredSize(new TerminalSize(7, 1));
+        modeCB.setSize(new TerminalSize(7, 1));
+        return modeCB;
+        /*for(int y=0; y < pty.size(); y++){
+            Object o = pty.keySet().toArray();
+            log.info("{}", o.toString());
+            //cbpn.add(pty.keySet().toArray()[y]);
+        }*/
         /*Elements dd = ports.get(i).getElementsByAttributeValue("name", "pty").select("select > option");
         if (dd.size() > 0) {
             Elements selected = dd.select("option[selected]");
@@ -234,7 +252,7 @@ public class MegaMainScreen {
             modeCB.setEnabled(false);
             return modeCB;
         }*/
-        return null;
+        //return null;
     }
 
     private void loadportpref() {
