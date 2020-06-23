@@ -7,21 +7,24 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MegaDPortModel {
     Logger log = LoggerFactory.getLogger(MegaDPortModel.class);
     String url;
     Document port;
-    String portStatus;
+    public String portStatus;
     String digitalvalue;
-    HashMap<String, Integer> pty = new HashMap<>();
-    String selectedPTY;
+
+    List<MegaPTYmodel> pty = new ArrayList<>();
+    MegaPTYmodel selectedPTY;
     String ecmd;
     boolean af;
     String eth;
     boolean naf;
-    HashMap<String, Integer> m = new HashMap<>();
+    List<MegaMModel> m = new ArrayList<>();
     String selectedM;
     boolean misc;
     String miscVal;
@@ -29,7 +32,7 @@ public class MegaDPortModel {
     HashMap<String, Integer> gr = new HashMap<>();
     String hst;
     boolean d;
-    HashMap<String, Integer> defD = new HashMap<>();
+    List<MegaDefDModel> defD = new ArrayList<>();
     String selectedDefD;
     boolean mt;
     String grp;
@@ -45,36 +48,43 @@ public class MegaDPortModel {
     void setPTY() {
         Elements dd = port.getElementsByAttributeValue("name", "pty").select("select > option");
         if (dd.size() > 0) {
-            setSelectedPTY(dd.select("option[selected]"));
             for (Element mode : dd) {
-                pty.put(mode.text(), Integer.parseInt(mode.attr("value")));
+                MegaPTYmodel ptyCombo = new MegaPTYmodel();
+                ptyCombo.add(mode.text(), Integer.parseInt(mode.attr("value")));
+                ptyCombo.setSelected(mode.select("option[selected]").hasAttr("selected"));
+                pty.add(ptyCombo);
             }
         } else {
             pty = null;
         }
     }
 
+    public MegaPTYmodel getSelectedPTY() {
+        if (pty != null) {
+            for (MegaPTYmodel sel : pty) {
+                if (sel.selected) {
+                    return sel;
+                }
+            }
+        }
+        return new MegaPTYmodel("ADC");
+    }
+
     void setSelectedPTY(Elements selected) {
-        selectedPTY = selected.text();
+        //ptyCombo.setSelected(selected.text());
     }
 
-    public String getSelectedPTY(){
-        if(selectedPTY != null) {
-            return selectedPTY;
-        } else return "ADC";
-    }
-
-    public HashMap<String, Integer> getPTY() {
+    public List<MegaPTYmodel> getPTY() {
         return pty;
     }
 
     void setECMD() {
-        if(!port.select("input[name=ecmd]").isEmpty()) {
+        if (!port.select("input[name=ecmd]").isEmpty()) {
             ecmd = port.select("input[name=ecmd]").attr("value");
         }
     }
 
-    public String getECMD(){
+    public String getECMD() {
         return ecmd;
     }
 
@@ -109,9 +119,11 @@ public class MegaDPortModel {
     void setM() {
         Elements dd = port.getElementsByAttributeValue("name", "m").select("select > option");
         if (dd.size() > 0) {
-            setSelectedM(dd.select("option[selected]"));
             for (Element mode : dd) {
-                m.put(mode.text(), Integer.parseInt(mode.attr("value")));
+                MegaMModel mCombo = new MegaMModel();
+                mCombo.add(mode.text(), Integer.parseInt(mode.attr("value")));
+                mCombo.setSelected(mode.select("option[selected]").hasAttr("selected"));
+                m.add(mCombo);
             }
         } else {
             m = null;
@@ -122,20 +134,23 @@ public class MegaDPortModel {
         this.selectedM = selectedM.text();
     }
 
-    public String getSelectedM() {
-        return selectedM;
+    public MegaMModel getSelectedM() {
+        if (pty != null) {
+            for (MegaMModel sel : m) {
+                if (sel.selected) {
+                    return sel;
+                }
+            }
+        }
+        return null;
     }
-    public HashMap<String, Integer> getM() {
+
+    public List<MegaMModel> getM() {
         return m;
     }
 
     void setMisc() {
-        Elements e = port.select("input[name=misc]").select("input[type=checkbox]");
-        if (!port.select("input[name=misc]").select("input[type=checkbox]").isEmpty()) {
-            misc = port.select("input[name=misc]").select("input[checked]").hasAttr("checked");
-        } else if(!port.select("input[name=misc]").isEmpty()){
-            miscVal = port.select("input[name=misc]").attr("value");
-        }
+        misc = port.select("input[name=misc]").select("input[checked]").hasAttr("checked");
     }
 
     public boolean getMisc() {
@@ -174,9 +189,11 @@ public class MegaDPortModel {
         } else {
             Elements dd = port.getElementsByAttributeValue("name", "d").select("select > option");
             if (dd.size() > 0) {
-                selectedDefD = dd.select("option[selected]").text();
                 for (Element mode : dd) {
-                    defD.put(mode.text(), Integer.parseInt(mode.attr("value")));
+                    MegaDefDModel mCombo = new MegaDefDModel();
+                    mCombo.add(mode.text(), Integer.parseInt(mode.attr("value")));
+                    mCombo.setSelected(mode.select("option[selected]").hasAttr("selected"));
+                    defD.add(mCombo);
                 }
             } else {
                 defD = null;
@@ -188,7 +205,22 @@ public class MegaDPortModel {
         return d;
     }
 
-    void setMT(){
+    public List<MegaDefDModel> getDefD() {
+        return defD;
+    }
+
+    public MegaDefDModel getSelectedDefD() {
+        if (defD != null) {
+            for (MegaDefDModel sel : defD) {
+                if (sel.selected) {
+                    return sel;
+                }
+            }
+        }
+        return null;
+    }
+
+    void setMT() {
         if (!port.select("input[name=mt]").select("input[type=checkbox]").isEmpty()) {
             mt = port.select("input[name=mt]").select("input[checked]").hasAttr("checked");
         }
@@ -248,7 +280,6 @@ public class MegaDPortModel {
         setGRP();
         setDisp();
         setPWM();
-
         log.info("parse comleted");
         //.split("<br>")[0].substring(port.body().text().split("<br>")[0].indexOf('>')+5, port.body().text().split("<br>")[0].indexOf('<'));
 
