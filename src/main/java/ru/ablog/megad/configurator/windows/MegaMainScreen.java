@@ -34,8 +34,10 @@ public class MegaMainScreen {
     Label modeLbl;
     Label rawLbl;
     Label defDLbl;
+    Label miscLbl;
     TextBox ecmdVal;
     TextBox netTxtbox;
+    TextBox miscVal;
     CheckBox netChkbox;
     ComboBox<MegaMModel> m;
     CheckBox mChkbox;
@@ -43,6 +45,7 @@ public class MegaMainScreen {
     ComboBox<MegaDefDModel> defD;
     Button onButton;
     Button offButton;
+    Button refreshButton;
 
     public MegaMainScreen(String inetAddress, WindowBasedTextGUI textGUI) {
         deviceAddress = inetAddress;
@@ -206,14 +209,14 @@ public class MegaMainScreen {
             switch (port.getSelectedPTY().toString()) {
                 case "In":
                     removeDefaultOutput();
-
+                    removeOnOFFButtons();
                     addPortstat(i, 15, 0);
                     addType(i, 15, 1);
                     addAct(i, 15, 2);
                     addNet(i, 15, 3);
                     addMode(i, 15, 4);
                     addRaw(i, 15, 5);
-
+                    addRefreshButton(i, 15, 6);
                     break;
                 case "Out":
                     removeAct();
@@ -222,12 +225,14 @@ public class MegaMainScreen {
                     removeRaw();
 
                     addPortstat(i, 15, 0);
-
+                    addOnOFFButtons(i, 15, 1);
                     addType(i, 15, 2);
                     addDefaultOutput(i, 15, 3);
+                    addRefreshButton(i, 15, 4);
 
                     break;
                 case "ADC":
+                    removeOnOFFButtons();
                     removeType();
                     removeAct();
                     removeNet();
@@ -236,6 +241,11 @@ public class MegaMainScreen {
                     removeDefaultOutput();
 
                     addPortstat(i, 15, 0);
+                    addMode(i, 15, 1);
+                    addVal(i, 15, 2);
+                    addAct(i, 15, 3);
+                    addNet(i, 15, 4);
+                    addRefreshButton(i, 15, 5);
                     break;
             }
         }
@@ -392,14 +402,17 @@ public class MegaMainScreen {
         m.setPreferredSize(new TerminalSize(7, 1));
         m.setSize(new TerminalSize(7, 1));
 
-        mChkbox = new CheckBox();
-        mChkbox.setSize(new TerminalSize(3, 1));
-        mChkbox.setPosition(new TerminalPosition(m.getPosition().getColumn() + m.getSize().getColumns(), row));
-        mChkbox.setChecked(port.getMisc());
+        if (!port.getSelectedPTY().toString().equals("ADC")) {
+            mChkbox = new CheckBox();
+            mChkbox.setSize(new TerminalSize(3, 1));
+            mChkbox.setPosition(new TerminalPosition(m.getPosition().getColumn() + m.getSize().getColumns(), row));
+            mChkbox.setChecked(port.getMisc());
+            main.addComponent(mChkbox);
+        }
 
         main.addComponent(modeLbl);
         main.addComponent(m);
-        main.addComponent(mChkbox);
+
     }
 
     private void removeMode() {
@@ -463,19 +476,24 @@ public class MegaMainScreen {
             main.removeComponent(defD);
         }
 
-        defDLbl = new Label("Default:");
-        defDLbl.setPosition(new TerminalPosition(col, row));
-        defDLbl.setSize(new TerminalSize(defDLbl.getText().length(), 1));
 
-        defD = new ComboBox<>(port.getDefD());
-        defD.setSelectedItem(port.getSelectedDefD());
-        defD.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
-        defD.setPosition(new TerminalPosition(defDLbl.getPosition().getColumn() + defDLbl.getText().length(), row));
-        defD.setPreferredSize(new TerminalSize(3, 1));
-        defD.setSize(new TerminalSize(3, 1));
+        try {
+            defDLbl = new Label("Default:");
+            defDLbl.setPosition(new TerminalPosition(col, row));
+            defDLbl.setSize(new TerminalSize(defDLbl.getText().length(), 1));
 
-        main.addComponent(defDLbl);
-        main.addComponent(defD);
+            defD = new ComboBox<>(port.getDefD());
+            defD.setSelectedItem(port.getSelectedDefD());
+            defD.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
+            defD.setPosition(new TerminalPosition(defDLbl.getPosition().getColumn() + defDLbl.getText().length(), row));
+            defD.setPreferredSize(new TerminalSize(3, 1));
+            defD.setSize(new TerminalSize(3, 1));
+
+            main.addComponent(defDLbl);
+            main.addComponent(defD);
+        } catch (Exception ex) {
+            log.info("PWM");
+        }
     }
 
     private void removeDefaultOutput() {
@@ -489,14 +507,113 @@ public class MegaMainScreen {
 
     }
 
-    private void addOnOFFButtons(int i) {
+    private void addOnOFFButtons(int i, int col, int row) {
+
+        if (onButton != null) {
+            main.removeComponent(onButton);
+        }
+
+        if (offButton != null) {
+            main.removeComponent(offButton);
+        }
+
+
         onButton = new Button("ON", () -> {
             try {
-                http.connectToMega("http://" + deviceAddress + "/" + pass + "/?pt=" + i);
+                http.connectToMega("http://" + deviceAddress + "/" + pass + "/?pt=" + i + "&cmd=" + i + ":1");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+        onButton.setPosition(new TerminalPosition(col, row));
+        onButton.setSize(new TerminalSize(onButton.getLabel().length() + 2, 1));
+        onButton.setPreferredSize(new TerminalSize(onButton.getLabel().length(), 1));
+
+
+        offButton = new Button("OFF", () -> {
+            try {
+                http.connectToMega("http://" + deviceAddress + "/" + pass + "/?pt=" + i + "&cmd=" + i + ":0");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        offButton.setPosition(new TerminalPosition(onButton.getPosition().getColumn() + onButton.getSize().getColumns(), row));
+        offButton.setSize(new TerminalSize(offButton.getLabel().length() + 2, 1));
+
+        main.addComponent(onButton);
+        main.addComponent(offButton);
+    }
+
+    private void removeOnOFFButtons() {
+        if (onButton != null) {
+            main.removeComponent(onButton);
+        }
+
+        if (offButton != null) {
+            main.removeComponent(offButton);
+        }
+
+    }
+
+
+    private void addVal(int portnumber, int col, int row) {
+        MegaDPortModel port = ports.get(portnumber);
+
+        if (miscLbl != null) {
+            main.removeComponent(miscLbl);
+        }
+
+        if (miscVal != null) {
+            main.removeComponent(miscVal);
+        }
+
+        miscLbl = new Label("Val:");
+        miscLbl.setPosition(new TerminalPosition(col, row));
+        miscLbl.setSize(new TerminalSize(miscLbl.getText().length(), 1));
+
+        miscVal = new TextBox(port.getMiscVal());
+        miscVal.setSize(new TerminalSize(15, 1));
+        miscVal.setPosition(new TerminalPosition(miscLbl.getPosition().getColumn() + miscLbl.getText().length(), row));
+
+        main.addComponent(miscLbl);
+        main.addComponent(miscVal);
+
+    }
+
+    private void removeVal() {
+        if (netLbl != null) {
+            main.removeComponent(netLbl);
+        }
+
+        if (netTxtbox != null) {
+            main.removeComponent(netTxtbox);
+        }
+
+        if (netChkbox != null) {
+            main.removeComponent(netChkbox);
+        }
+    }
+
+    private void addRefreshButton(int portnumber, int col, int row) {
+        if (refreshButton != null) {
+            main.removeComponent(refreshButton);
+        }
+
+
+        refreshButton = new Button("Refresh", () -> {
+            MegaDPortModel port = ports.get(portnumber);
+            try {
+                port.refresh(http.connectToMega("http://" + deviceAddress + "/" + pass + "/?pt=" + portnumber));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            loadport(portnumber);
+        });
+        refreshButton.setPosition(new TerminalPosition(col, row));
+        refreshButton.setSize(new TerminalSize(refreshButton.getLabel().length() + 2, 1));
+        refreshButton.setPreferredSize(new TerminalSize(refreshButton.getLabel().length(), 1));
+
+        main.addComponent(refreshButton);
     }
 
     private void loadportpref() {

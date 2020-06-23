@@ -5,6 +5,9 @@ public class MegaDefDModel {
     int value;
     boolean selected;
 
+    public MegaDefDModel() {
+    }
+
     @Override
     public String toString() {
         return key;

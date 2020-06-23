@@ -90,7 +90,7 @@ public class MegaDPortModel {
 
     void setAF() {
         if (!port.select("input[name=af]").select("input[type=checkbox]").isEmpty()) {
-            misc = port.select("input[name=af]").select("input[checked]").hasAttr("checked");
+            af = port.select("input[name=af]").select("input[checked]").hasAttr("checked");
         }
     }
 
@@ -135,7 +135,7 @@ public class MegaDPortModel {
     }
 
     public MegaMModel getSelectedM() {
-        if (pty != null) {
+        if (m != null) {
             for (MegaMModel sel : m) {
                 if (sel.selected) {
                     return sel;
@@ -150,7 +150,13 @@ public class MegaDPortModel {
     }
 
     void setMisc() {
-        misc = port.select("input[name=misc]").select("input[checked]").hasAttr("checked");
+        if (!port.select("input[name=misc]").select("input[type=checkbox]").isEmpty()) {
+            misc = port.select("input[name=misc]").select("input[checked]").hasAttr("checked");
+        } else {
+            if (!port.select("input[name=misc]").isEmpty()) {
+                miscVal = port.select("input[name=misc]").attr("value");
+            }
+        }
     }
 
     public boolean getMisc() {
@@ -283,5 +289,25 @@ public class MegaDPortModel {
         log.info("parse comleted");
         //.split("<br>")[0].substring(port.body().text().split("<br>")[0].indexOf('>')+5, port.body().text().split("<br>")[0].indexOf('<'));
 
+    }
+
+    public void refresh(String url) {
+        port = Jsoup.parse(url);
+        portStatus = port.body().text().split(" ")[1];
+        digitalvalue = port.body().text().split(" ")[2];
+        setPTY();
+        setECMD();
+        setAF();
+        setEth();
+        setNaf();
+        setM();
+        setMisc();
+        setGR();
+        setHST();
+        setD();
+        setMT();
+        setGRP();
+        setDisp();
+        setPWM();
     }
 }
