@@ -38,6 +38,7 @@ public class MegaDPortModel {
     String grp;
     String disp;
     String pwm;
+    String defPWM;
 
     public MegaDPortModel(String connectToMega) {
         url = connectToMega;
@@ -46,6 +47,7 @@ public class MegaDPortModel {
     }
 
     void setPTY() {
+        pty.clear();
         Elements dd = port.getElementsByAttributeValue("name", "pty").select("select > option");
         if (dd.size() > 0) {
             for (Element mode : dd) {
@@ -117,6 +119,7 @@ public class MegaDPortModel {
     }
 
     void setM() {
+        m.clear();
         Elements dd = port.getElementsByAttributeValue("name", "m").select("select > option");
         if (dd.size() > 0) {
             for (Element mode : dd) {
@@ -193,6 +196,7 @@ public class MegaDPortModel {
         if (!port.select("input[name=d]").select("input[type=checkbox]").isEmpty()) {
             d = port.select("input[name=d]").select("input[checked]").hasAttr("checked");
         } else {
+            defD.clear();
             Elements dd = port.getElementsByAttributeValue("name", "d").select("select > option");
             if (dd.size() > 0) {
                 for (Element mode : dd) {
@@ -202,7 +206,12 @@ public class MegaDPortModel {
                     defD.add(mCombo);
                 }
             } else {
-                defD = null;
+                if (port.select("input[name=d]").select("input[maxlength]").hasAttr("maxlength")) {
+                    defPWM = port.select("input[name=d]").attr("value");
+                    defD = null;
+                } else {
+                    defD = null;
+                }
             }
         }
     }
@@ -213,6 +222,10 @@ public class MegaDPortModel {
 
     public List<MegaDefDModel> getDefD() {
         return defD;
+    }
+
+    public String getDefPWM() {
+        return defPWM;
     }
 
     public MegaDefDModel getSelectedDefD() {
@@ -257,15 +270,18 @@ public class MegaDPortModel {
     }
 
     void setPWM() {
-        if(!port.select("input[name=pwm]").attr("value").isEmpty()) {
+        if (!port.select("input[name=pwm]").attr("value").isEmpty()) {
             pwm = port.select("input[name=pwm]").attr("value");
         }
+    }
+
+    public String getPwm() {
+        return pwm;
     }
 
     String getStatus() {
         return portStatus;
     }
-
 
 
     void parse() {
@@ -286,7 +302,7 @@ public class MegaDPortModel {
         setGRP();
         setDisp();
         setPWM();
-        log.info("parse comleted");
+        //log.info("parse comleted");
         //.split("<br>")[0].substring(port.body().text().split("<br>")[0].indexOf('>')+5, port.body().text().split("<br>")[0].indexOf('<'));
 
     }

@@ -20,4 +20,8 @@ public class MegaMModel {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+    public int getSelectedValue() {
+        return value;
+    }
 }

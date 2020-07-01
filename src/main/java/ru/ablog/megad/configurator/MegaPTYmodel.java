@@ -18,9 +18,8 @@ public class MegaPTYmodel {
         key = adc;
     }
 
-    public MegaPTYmodel getSelected(String text) {
-
-        return null;
+    public int getSelectedValue() {
+        return value;
     }
 
     @Override
