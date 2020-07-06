@@ -1,7 +1,5 @@
 package ru.ablog.megad.configurator;
 
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.ablog.megad.configurator.windows.MegaSelectDeviceScreen;
@@ -18,6 +16,8 @@ public class MegaConfig {
 	static InetAddress address;
 	static MegaDUDPRequests udpServer;
 	public static GuiManager gm;
+	public static String ipDevice;
+	public static String passDevice;
 
 	public static void main(String[] args) throws IOException {
 
@@ -61,12 +61,12 @@ public class MegaConfig {
 	}
 
 	public static ArrayList<InetAddress> getLocaInterfaces() throws SocketException {
-		ArrayList<InetAddress> listIp = new ArrayList<InetAddress>();
-		for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+		ArrayList<InetAddress> listIp = new ArrayList<>();
+		for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
 			NetworkInterface ip = en.nextElement();
 			for (Enumeration<InetAddress> enumIpAddr = ip.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
 				InetAddress ipv4 = enumIpAddr.nextElement();
-				if(ipv4 instanceof Inet4Address) {
+				if (ipv4 instanceof Inet4Address) {
 					listIp.add(ipv4);
 					//log.info(ipv4.getHostAddress());
 				}
@@ -95,7 +95,6 @@ public class MegaConfig {
 
 
 	public static void registerDeviceListener(MegaSelectDeviceScreen megaSelectDeviceScreen) {
-		OnUDPIncomingEventListener megaSelectDeviceScreenListener = megaSelectDeviceScreen;
-		udpServer.registerOnGeekEventListener(megaSelectDeviceScreenListener);
+		udpServer.registerOnGeekEventListener(megaSelectDeviceScreen);
 	}
 }

@@ -148,6 +148,9 @@ public class MegaMainScreen {
         //log.info("mega type is <{}>", megaType.trim());
         //log.info("firmware type is <{}>", firmware);
 
+        MegaConfig.ipDevice = deviceAddress;
+        MegaConfig.passDevice = pass;
+
         if (megaType.trim().equals("MegaD-328")) {
             for (int i = 0; i <= 15; i++) {
                 MegaDPortModel port = new MegaDPortModel(http.connectToMega("http://" + deviceAddress + "/" + pass + "/?pt=" + i));
@@ -180,7 +183,8 @@ public class MegaMainScreen {
         }
         loadport(0);
         main.addComponent(actionListBox);
-        MegaConfig.gm.refreshWindow(main.withBorder(Borders.doubleLine(megaType.trim() + " firmware: " + firmware + "   IP:" + deviceAddress)));
+        genGUI.window.setComponent(main.withBorder(Borders.doubleLine(megaType.trim() + " firmware: " + firmware + "   IP:" + deviceAddress)));
+        //MegaConfig.gm.refreshWindow(main.withBorder(Borders.doubleLine(megaType.trim() + " firmware: " + firmware + "   IP:" + deviceAddress)));
        /* Window window = new BasicWindow();
         window.setComponent(main.withBorder(Borders.doubleLine(megaType.trim() + " firmware: " + firmware + "   IP:" + deviceAddress)));
         window.setHints(Arrays.asList(Window.Hint.CENTERED));

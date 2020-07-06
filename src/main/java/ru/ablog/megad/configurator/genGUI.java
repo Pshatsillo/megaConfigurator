@@ -9,13 +9,15 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.ablog.megad.configurator.windows.MegaConfigScreen;
+import ru.ablog.megad.configurator.windows.MegaSelectDeviceScreen;
 
 import java.io.IOException;
 import java.util.Collections;
 
 public class genGUI implements OnGUIUpdate {
 
-    static Window window = new BasicWindow();
+    public static Window window = new BasicWindow();
     Logger log = LoggerFactory.getLogger(MainWindow.class);
     public static WindowBasedTextGUI textGUI;
 
@@ -29,8 +31,14 @@ public class genGUI implements OnGUIUpdate {
                 screen.startScreen();
                 MenuBar menubar = new MenuBar();
                 Menu menuFile = new Menu("Действие(F2)");
+                menuFile.add(new MenuItem("Выбор меги", () -> {
+                    MegaSelectDeviceScreen sel = new MegaSelectDeviceScreen();
+                    sel.show();
+                    textGUI.setActiveWindow(window);
+                }));
+
                 menuFile.add(new MenuItem("Выход", () -> {
-                    log.info("exit");
+                    //log.info("exit");
                     System.exit(0);
                 }));
                 menuFile.setEnabled(false);
@@ -44,6 +52,21 @@ public class genGUI implements OnGUIUpdate {
                     //log.info("key {}", keyStroke);
                     // log.info("key {}", textGUI1.toString());
                     if (keyStroke.getKeyType() == KeyType.F2) {
+                        if ((MegaConfig.passDevice != null) && (MegaConfig.ipDevice != null)) {
+
+                            menuFile.add(new MenuItem("Конфигурация", () -> {
+                                MegaConfigScreen cfg = new MegaConfigScreen();
+
+                                cfg.show();
+
+                                textGUI.setActiveWindow(window);
+                            }));
+                        }
+
+                        menuFile.add(new MenuItem("Выход", () -> {
+                            //log.info("exit");
+                            System.exit(0);
+                        }));
                         menuFile.setEnabled(true);
                         menuFile.takeFocus();
                         textGUI.setActiveWindow(menuwindow);
