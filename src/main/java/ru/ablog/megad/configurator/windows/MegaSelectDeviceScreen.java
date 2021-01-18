@@ -51,6 +51,7 @@ public class MegaSelectDeviceScreen implements OnUDPIncomingEventListener {
         contentPanel.addComponent(readOnlyComboBox);
         Button selectInterfaceButton = new Button("Select", () -> {
             try {
+                MegaConfig.ipDevice = readOnlyComboBox.getSelectedItem();
                 MainWindow.showMainScreen(readOnlyComboBox.getSelectedItem(), textGUI);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
@@ -78,6 +79,7 @@ public class MegaSelectDeviceScreen implements OnUDPIncomingEventListener {
         contentPanel.addComponent(readOnlyComboBox);
         Button selectInterfaceButton = new Button("Select", () -> {
             try {
+                MegaConfig.ipDevice = readOnlyComboBox.getSelectedItem();
                 MainWindow.showMainScreen(readOnlyComboBox.getSelectedItem(), genGUI.textGUI);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();

@@ -43,7 +43,7 @@ public class MegaConfig {
 		//log.info("firmware - {}", megaConnect.getFirmwareVersion());
 		//log.info("firmware - {}", getLocaInterfaces().get(3).toString());
 		//String ch = "sec";								//preamble  mode     pass(sec)     old-ip       new-ip
-		//String hex = String.format("%02x", (int) ch); // aa 00     04  73 65 63 00 00   c0 a8 00 0e  c0 a8 0a 13
+		//String hex = String.format("%02x", (int) ch);    // aa 00     04  73 65 63 00 00   c0 a8 00 0e  c0 a8 0a 13
 		//log.info("char - {}", ch.getBytes());
 		//DatagramSocket socket;
 		//InetAddress address;
