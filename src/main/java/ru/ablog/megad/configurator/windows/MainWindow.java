@@ -58,13 +58,10 @@ public class MainWindow implements OnUDPIncomingEventListener {
         contentPanel.addComponent(selectInterfaceButton);
         return contentPanel;
     }
-
     public void onMessageReceive(byte[] result) {
         String ips = String.format("%d.%d.%d.%d", result[1] & 0xFF, result[2] & 0xFF, result[3] & 0xFF, result[4] & 0xFF);
         ip_list.add(ips);
     }
-
-
     public void show() {
         GenGUI.window.setComponent(create(netUtils.getLocalInterfaces()));
     }

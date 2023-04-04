@@ -3,7 +3,6 @@ package ru.ablog.megad.configurator.windows;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
 import ru.ablog.megad.configurator.GenGUI;
-
 import static ru.ablog.megad.configurator.GenGUI.textGUI;
 
 public class MenuFile extends Menu{
@@ -16,7 +15,6 @@ public class MenuFile extends Menu{
     public MenuFile() {
         super("Действие(F2)");
     }
-
     public Menu getMenu(){
         chooseMega = new MenuItem("Выбор меги", () -> {
             MainWindow window = new MainWindow();
@@ -42,15 +40,12 @@ public class MenuFile extends Menu{
         this.setEnabled(false);
         return this;
     }
-
     public void setIpMenu(boolean status) {
         ipChange.setEnabled(status);
     }
-
     public void setMegaMenu(boolean status) {
         chooseMega.setEnabled(status);
     }
-
     public void setConfigMenu(boolean status) {
         setConfig.setEnabled(status);
     }
