@@ -52,7 +52,6 @@ public class NetworkUtils {
     }
 
     public void startUDPServer(InetAddress inetAddress) {
-        //log.info("Starting UDP server");
         final byte[] buf = new byte[5];
         try {
             socket = new DatagramSocket(42000, inetAddress);
@@ -78,7 +77,6 @@ public class NetworkUtils {
     }
 
     public void stopUDPServer() {
-        //log.info("Stopping UDP server");
         server.interrupt();
         socket.close();
     }

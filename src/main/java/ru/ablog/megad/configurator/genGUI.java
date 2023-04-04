@@ -22,6 +22,8 @@ public class GenGUI implements OnGUIUpdate {
     public static Window window = new BasicWindow();
     Logger log = LoggerFactory.getLogger(GenGUI.class);
     public static WindowBasedTextGUI textGUI;
+    public static boolean isMegaSelected = false;
+    public static boolean isPasswordCorrect = false;
 
     public GenGUI() {
         Thread server = new Thread(() -> {
@@ -33,17 +35,25 @@ public class GenGUI implements OnGUIUpdate {
                 MenuBar menubar = new MenuBar();
                 MenuFile menuFile = new MenuFile();
                 menubar.add(menuFile.getMenu());
-                BasicWindow menuwindow = new BasicWindow();
-                menuwindow.setComponent(menubar);
+                BasicWindow menuWindow = new BasicWindow();
+                menuWindow.setComponent(menubar);
 
                 textGUI = new MultiWindowTextGUI(screen);
 
                 //Creating key press detect
                 textGUI.addListener((textGUI1, keyStroke) -> {
                     if (keyStroke.getKeyType() == KeyType.F2) {
+                        if (isMegaSelected) {
+                            menuFile.setIpMenu(true);
+                            menuFile.setMegaMenu(true);
+                            log.info("mega selected");
+                        }
+                        if(isPasswordCorrect){
+                            menuFile.setConfigMenu(true);
+                        }
                         menuFile.setEnabled(true);
                         menuFile.takeFocus();
-                        textGUI.setActiveWindow(menuwindow);
+                        textGUI.setActiveWindow(menuWindow);
                     } else if (keyStroke.getKeyType() == KeyType.Escape) {
                         menuFile.setEnabled(false);
                         textGUI.setActiveWindow(window);
@@ -51,14 +61,13 @@ public class GenGUI implements OnGUIUpdate {
                     return true;
                 });
                 window.setHints(Collections.singletonList(Window.Hint.CENTERED));
-                textGUI.addWindow(menuwindow);
+                textGUI.addWindow(menuWindow);
                 textGUI.addWindowAndWait(window);
             } catch (IOException e) {
                 log.error("Error {}", e.getMessage());
             }
         });
         server.start();
-
     }
 
     @Override

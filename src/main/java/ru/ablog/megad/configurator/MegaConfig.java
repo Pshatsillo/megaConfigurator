@@ -5,9 +5,8 @@ import ru.ablog.megad.configurator.utils.NetworkUtils;
 import ru.ablog.megad.configurator.windows.MainWindow;
 
 public class MegaConfig {
-
+public static String currentIp;
 	public static void main(String[] args) {
-		//Logger log = LoggerFactory.getLogger(MegaConfig.class);
 		GuiManager gm = new GuiManager();
 		OnGUIUpdate gu = new GenGUI();
 		gm.registerOnGUIUpdateEventListener(gu);
